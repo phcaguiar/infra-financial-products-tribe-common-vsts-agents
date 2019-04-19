@@ -1,4 +1,4 @@
-# Global variables
+# Common variables
 # location                                =   ""
 
 # Shared variables from your subscription

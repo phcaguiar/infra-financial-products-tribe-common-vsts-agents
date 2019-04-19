@@ -36,12 +36,12 @@ resource "azurerm_virtual_machine" "vmlinux" {
     managed_disk_type = "${var.vm_storage_os_managed_disk_type}"
   }
 
-  storage_data_disk {
-    name          = "${var.vm_storage_os_disk_name}-data"
-    disk_size_gb  = "20"
-    create_option = "Empty"
-    lun           = 0
-  }   
+  # storage_data_disk {
+  #   name          = "${var.vm_storage_os_disk_name}-data"
+  #   disk_size_gb  = "20"
+  #   create_option = "Empty"
+  #   lun           = 0
+  # }   
 
   os_profile {
     computer_name  = "${var.vm_os_profile_computer_name}linux"
