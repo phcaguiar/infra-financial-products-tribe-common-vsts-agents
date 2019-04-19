@@ -5,63 +5,15 @@
     become: true
     tasks:
 
-  # ## Task to Install VSTS Agent Queue
-  #     - name: Task to Install VSTS Agent Queue
-  #       include_role:
-  #         name: stone-payments.role-vsts-agent
-  #       vars: 
-  #         vsts_agent_name: "{{ ansible_hostname }}-a{{ item }}"
-  #         vsts_agentfolder: "/home/{{ vsts_agent_user }}/agent/a{{ item }}"
-  #         vsts_workfolder:  "/home/{{ vsts_agent_user }}/work/a{{ item }}"
-  #       loop: "{{ range(1,4) | list }}"
-
-  # ## Task to Install Ansible
-  #     - name: Task to Install Ansible
-  #       include_role:
-  #         name: stone-payments.ansible
-
-  # ## Tasks to Install Terraform
-  #     - name: Tasks to Install Terraform Packages Dependencies
-  #       package:
-  #         name: "{{ item }}"
-  #         state: present
-  #       with_items:
-  #         - unzip
-
-  #     - name: "Download terraform {{ terraform_version }} archive for Linux 32 bits"
-  #       get_url:
-  #         url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_386.zip"
-  #         dest: "/tmp/terraform-{{ terraform_version }}.zip"
-  #       when: "'32' in ansible_architecture and 'Linux' == ansible_system"
-
-  #     - name: "Download terraform {{ terraform_version }} archive for Linux 64 bits"
-  #       get_url:
-  #         url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip"
-  #         dest: "/tmp/terraform-{{ terraform_version }}.zip"
-  #       when: "'64' in ansible_architecture and 'Linux' == ansible_system"
-
-  #     - name: "Unarchive terraform {{ terraform_version }} zip"
-  #       unarchive:
-  #         copy: no
-  #         src:  "/tmp/terraform-{{ terraform_version }}.zip"
-  #         dest: "/usr/bin"
-
-  # # Install ansible[azure] pip package
-  #     - name: Install ansible[azure] pre-requisite packages
-  #       package:
-  #         name: "{{ item }}"
-  #         state: present
-  #       with_items:
-  #         - libssl-dev
-  #         - libffi-dev
-  #         - python-dev
-  #         - python-pip
-  #         - python-dnspython
-  #         - python-jmespath
-
-  #     - name: Install ansible[azure] pip package
-  #       pip:
-  #         name: ansible[azure]
+  ## Task to Install VSTS Agent Queue
+      - name: Task to Install VSTS Agent Queue
+        include_role:
+          name: stone-payments.role-vsts-agent
+        vars: 
+          vsts_agent_name: "{{ ansible_hostname }}-a{{ item }}"
+          vsts_agentfolder: "/home/{{ vsts_agent_user }}/agent/a{{ item }}"
+          vsts_workfolder:  "/home/{{ vsts_agent_user }}/work/a{{ item }}"
+        loop: "{{ range(1,4) | list }}"
 
 ### Docker tasks
     - name: 'install docker dependencies'
@@ -117,59 +69,29 @@
         state: 'started'
         enabled: 'yes'
 
-### LVM task
-    - name: "Configure lvm in {{ pvs_name }}"
-      include_role:
-        name: stone-payments.lvm
+  ## Dotnetcore installation tasks
+      - name: Import Microsoft APT key
+        apt_key:
+          url: '{{ dotnet_debian_repo_gpg_key_url }}'
+          keyring: /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+          state: 'present'
+        # ignore_errors: true
 
-  ### Dotnetcore installation tasks
-  #     - name: Import Microsoft APT key
-  #       apt_key:
-  #         url: '{{ dotnet_debian_repo_gpg_key_url }}'
-  #         keyring: /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-  #         state: 'present'
-  #       # ignore_errors: true
+      - name: Add repo for Ubuntu Xenial
+        apt_repository:
+          repo: "deb [arch=amd64] {{ microsoft_xenial_ubuntu_repo }} xenial main"
+          filename: "dotnetdev"
+          state: present
+          update_cache: yes
+        when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
 
-  #     - name: Add repo for Ubuntu Xenial
-  #       apt_repository:
-  #         repo: "deb [arch=amd64] {{ microsoft_xenial_ubuntu_repo }} xenial main"
-  #         filename: "dotnetdev"
-  #         state: present
-  #         update_cache: yes
-  #       when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
-
-  #     - name: Add repo for Ubuntu Bionic
-  #       apt_repository:
-  #         repo: "deb [arch=amd64] {{ microsoft_bionic_ubuntu_repo }} bionic main"
-  #         filename: "dotnetdev"
-  #         state: present
-  #         update_cache: yes
-  #       when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
-
-  # ### Install kubectl
-  #     - name: "Add {{ kube_url_apt_key }} Apt signing key"
-  #       apt_key:
-  #         url: "{{ kube_url_apt_key }}"
-  #         state: present
-
-  #     - name: "Add apt_repository deb {{ kube_url_apt }} kubernetes-xenial main"
-  #       apt_repository:
-  #         repo: "deb {{ kube_url_apt }} kubernetes-xenial main"
-  #         state: present  
-  #         filename: "{{ kube_source_list_file }}"
-  #       when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"	
-
-  #     - name: "Add apt_repository deb {{ kube_url_apt }} kubernetes-bionic main"
-  #       apt_repository:
-  #         repo: "deb {{ kube_url_apt }} kubernetes-bionic main"
-  #         state: present  
-  #         filename: "{{ kube_source_list_file }}"
-  #       when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"	
-
-  #     - name: Install kubectl package
-  #       package:
-  #         name: kubectl
-  #         state: present              
+      - name: Add repo for Ubuntu Bionic
+        apt_repository:
+          repo: "deb [arch=amd64] {{ microsoft_bionic_ubuntu_repo }} bionic main"
+          filename: "dotnetdev"
+          state: present
+          update_cache: yes
+        when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"          
 
 
 
