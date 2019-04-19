@@ -1,0 +1,259 @@
+---
+### Ansible Tasks for Linux System
+  - name: Ansible Tasks for Linux System
+    hosts: linux
+    become: true
+    tasks:
+
+  # ## Task to Install VSTS Agent Queue
+  #     - name: Task to Install VSTS Agent Queue
+  #       include_role:
+  #         name: stone-payments.role-vsts-agent
+  #       vars: 
+  #         vsts_agent_name: "{{ ansible_hostname }}-a{{ item }}"
+  #         vsts_agentfolder: "/home/{{ vsts_agent_user }}/agent/a{{ item }}"
+  #         vsts_workfolder:  "/home/{{ vsts_agent_user }}/work/a{{ item }}"
+  #       loop: "{{ range(1,4) | list }}"
+
+  # ## Task to Install Ansible
+  #     - name: Task to Install Ansible
+  #       include_role:
+  #         name: stone-payments.ansible
+
+  # ## Tasks to Install Terraform
+  #     - name: Tasks to Install Terraform Packages Dependencies
+  #       package:
+  #         name: "{{ item }}"
+  #         state: present
+  #       with_items:
+  #         - unzip
+
+  #     - name: "Download terraform {{ terraform_version }} archive for Linux 32 bits"
+  #       get_url:
+  #         url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_386.zip"
+  #         dest: "/tmp/terraform-{{ terraform_version }}.zip"
+  #       when: "'32' in ansible_architecture and 'Linux' == ansible_system"
+
+  #     - name: "Download terraform {{ terraform_version }} archive for Linux 64 bits"
+  #       get_url:
+  #         url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip"
+  #         dest: "/tmp/terraform-{{ terraform_version }}.zip"
+  #       when: "'64' in ansible_architecture and 'Linux' == ansible_system"
+
+  #     - name: "Unarchive terraform {{ terraform_version }} zip"
+  #       unarchive:
+  #         copy: no
+  #         src:  "/tmp/terraform-{{ terraform_version }}.zip"
+  #         dest: "/usr/bin"
+
+  # # Install ansible[azure] pip package
+  #     - name: Install ansible[azure] pre-requisite packages
+  #       package:
+  #         name: "{{ item }}"
+  #         state: present
+  #       with_items:
+  #         - libssl-dev
+  #         - libffi-dev
+  #         - python-dev
+  #         - python-pip
+  #         - python-dnspython
+  #         - python-jmespath
+
+  #     - name: Install ansible[azure] pip package
+  #       pip:
+  #         name: ansible[azure]
+
+### Docker tasks
+    - name: 'install docker dependencies'
+      apt:
+        name: '{{ item }}'
+        state: 'present'
+      with_items:
+        - 'apt-transport-https'
+        - 'ca-certificates'  
+
+    - name: 'add docker repo apt key'
+      apt_key:
+        url: 'https://download.docker.com/linux/ubuntu/gpg'
+        id: '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
+        state: 'present'
+      register: 'add_repository_key'
+      ignore_errors: true          
+
+    - name: 'add Docker repository'
+      apt_repository:
+        repo: '{{ docker_apt_repository }}'
+        state: 'present'
+        update_cache: 'yes'   
+
+    - name: 'install docker'
+      apt:
+        name: 'docker-ce={{ docker_version }}'
+        state: 'present'       
+
+    - name: 'prepare default daemon configuration'
+      copy:
+        src: 'daemon.json'
+        dest: '/etc/docker/daemon.json'
+
+    - name: 'set periodic docker system prune'
+      cron:
+        name: 'docker-prune'
+        minute: '0'
+        hour: '*/2'
+        job: 'docker container prune -f'    
+
+    - name: 'add users to docker group'
+      user:
+        name: '{{ item }}'
+        groups: 'docker'
+        append: 'yes'
+      with_items: '{{ vsts_agent_user }}'
+      when: 'docker_group_members is defined'
+
+    - name: 'enable docker systemd service'
+      service:
+        name: 'docker'
+        state: 'started'
+        enabled: 'yes'
+
+### LVM task
+    - name: "Configure lvm in {{ pvs_name }}"
+      include_role:
+        name: stone-payments.lvm
+
+  ### Dotnetcore installation tasks
+  #     - name: Import Microsoft APT key
+  #       apt_key:
+  #         url: '{{ dotnet_debian_repo_gpg_key_url }}'
+  #         keyring: /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+  #         state: 'present'
+  #       # ignore_errors: true
+
+  #     - name: Add repo for Ubuntu Xenial
+  #       apt_repository:
+  #         repo: "deb [arch=amd64] {{ microsoft_xenial_ubuntu_repo }} xenial main"
+  #         filename: "dotnetdev"
+  #         state: present
+  #         update_cache: yes
+  #       when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
+
+  #     - name: Add repo for Ubuntu Bionic
+  #       apt_repository:
+  #         repo: "deb [arch=amd64] {{ microsoft_bionic_ubuntu_repo }} bionic main"
+  #         filename: "dotnetdev"
+  #         state: present
+  #         update_cache: yes
+  #       when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+
+  # ### Install kubectl
+  #     - name: "Add {{ kube_url_apt_key }} Apt signing key"
+  #       apt_key:
+  #         url: "{{ kube_url_apt_key }}"
+  #         state: present
+
+  #     - name: "Add apt_repository deb {{ kube_url_apt }} kubernetes-xenial main"
+  #       apt_repository:
+  #         repo: "deb {{ kube_url_apt }} kubernetes-xenial main"
+  #         state: present  
+  #         filename: "{{ kube_source_list_file }}"
+  #       when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"	
+
+  #     - name: "Add apt_repository deb {{ kube_url_apt }} kubernetes-bionic main"
+  #       apt_repository:
+  #         repo: "deb {{ kube_url_apt }} kubernetes-bionic main"
+  #         state: present  
+  #         filename: "{{ kube_source_list_file }}"
+  #       when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"	
+
+  #     - name: Install kubectl package
+  #       package:
+  #         name: kubectl
+  #         state: present              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Ansible Taks for Windows System
+
+  - name: Run ansible tasks on Windows
+    hosts: windows
+    tasks:
+
+  ## VSTS Agent installation task    
+      - name: install vsts agent
+        include_role:
+          name: stone-payments.win-vsts-agent
+
+  ## IIS installation tasks
+      - name: Install IIS Features
+        win_feature:
+          name: "{{ item }}"
+          include_sub_features: true 
+          include_management_tools: true
+          state: present
+        with_items:
+          - NET-Framework-45-Core        
+          - Web-Asp-Net45
+          - Web-Http-Errors
+          - Web-Common-Http        
+          - Web-Static-Content
+          - NET-HTTP-Activation
+          - NET-Non-HTTP-Activ
+        register: win_iis_basic_features
+        tags: iis_basic_features
+        when: install_iis == true
+
+      - name: Install IIS WCF Features
+        win_feature:
+          name: "{{ item }}"
+          include_sub_features: true 
+          include_management_tools: true
+          state: present
+        with_items:
+          - NET-WCF-TCP-Activation45
+          - NET-WCF-HTTP-Activation45
+        register: win_iis_wcf_features
+        tags: iis_wcf_features 
+        when: install_wcf == true # Default value is false
+
+  ## Dotnet core installation task
+      - name: Install dotnet core
+        win_chocolatey:
+          name: "{{ dotnetcore_version }}"
+          state: present
+        register: win_dotnetcore
+        tags: dotnetcore
+        when: install_dotnetcore == true  # Default value is false
+
+  ## Dotnet ful framework installation task
+      - name: Install dotnet full
+        win_chocolatey:
+          name: "{{ dotnetfull_version }}"
+          state: present
+        register: win_dotnetfull
+        tags: dotnetfull
+        when: install_dotnetfull == true # Default value is false
+
+  ## NSSM installation task
+      - name: Install NSSM
+        win_chocolatey:
+          name: "{{ nssm_version }}"
+          state: present
+        register: win_nssm
+        tags: nssm
+        when: install_nssm == true # Default value is false

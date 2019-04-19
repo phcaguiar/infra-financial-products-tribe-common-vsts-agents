@@ -1,0 +1,101 @@
+---
+### Ansible Tasks for Linux System
+  - name: Ansible Tasks for Linux System
+    hosts: linux
+    become: true
+    tasks:
+
+  ## Task to Install VSTS Agent Queue
+      - name: Task to Install VSTS Agent Queue
+        include_role:
+          name: stone-payments.role-vsts-agent
+        vars: 
+          vsts_agent_name: "{{ ansible_hostname }}-a{{ item }}"
+          vsts_agentfolder: "/home/{{ vsts_agent_user }}/agent/a{{ item }}"
+          vsts_workfolder:  "/home/{{ vsts_agent_user }}/work/a{{ item }}"
+        loop: "{{ range(1,4) | list }}"
+
+  ## Task to Install Ansible
+      - name: Task to Install Ansible
+        include_role:
+          name: stone-payments.ansible
+
+  ## Tasks to Install Terraform
+      - name: Tasks to Install Terraform Packages Dependencies
+        package:
+          name: "{{ item }}"
+          state: present
+        with_items:
+          - unzip
+
+      - name: "Download terraform {{ terraform_version }} archive for Linux 32 bits"
+        get_url:
+          url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_386.zip"
+          dest: "/tmp/terraform-{{ terraform_version }}.zip"
+        when: "'32' in ansible_architecture and 'Linux' == ansible_system"
+
+      - name: "Download terraform {{ terraform_version }} archive for Linux 64 bits"
+        get_url:
+          url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip"
+          dest: "/tmp/terraform-{{ terraform_version }}.zip"
+        when: "'64' in ansible_architecture and 'Linux' == ansible_system"
+
+      - name: "Unarchive terraform {{ terraform_version }} zip"
+        unarchive:
+          copy: no
+          src:  "/tmp/terraform-{{ terraform_version }}.zip"
+          dest: "/usr/bin"
+
+  # Install ansible[azure] pip package
+      - name: Install ansible[azure] pre-requisite packages
+        package:
+          name: "{{ item }}"
+          state: present
+        with_items:
+          - libssl-dev
+          - libffi-dev
+          - python-dev
+          - python-pip
+          - python-dnspython
+          - python-jmespath
+
+      - name: Install ansible[azure] pip package
+        pip:
+          name: ansible[azure]
+
+  ### Tasks to install AZ CLI
+      - name: Task to install az cli dependencies
+        package:
+          name: '{{ item }}'
+          state: 'present'
+        with_items:
+          - 'apt-transport-https'
+      
+      - name: Download and install the Microsoft signing key
+        apt_key:
+          url: https://packages.microsoft.com/keys/microsoft.asc
+          keyring: /etc/apt/trusted.gpg.d/debian.gpg
+
+      - name: Add Microsoft repo for Ubuntu Xenial
+        apt_repository:
+          repo: "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ xenial main"
+          filename: "azure-cli.list"
+          state: present
+          update_cache: yes
+        when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
+
+      - name: Add Microsoft repo for Ubuntu Bionic
+        apt_repository:
+          repo: "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main"
+          filename: "azure-cli.list"
+          state: present
+          update_cache: yes
+        when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
+
+      # - name: tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+      #   shell: tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null  
+
+      - name: Install az cli package
+        package:
+          name: azure-cli
+          state: present
