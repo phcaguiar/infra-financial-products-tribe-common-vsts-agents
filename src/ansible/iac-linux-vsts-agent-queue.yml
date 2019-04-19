@@ -92,10 +92,17 @@
           update_cache: yes
         when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
 
-      # - name: tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
-      #   shell: tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null  
-
       - name: Install az cli package
         package:
           name: azure-cli
           state: present
+
+      - name: Set cron to clean vsts work directory
+        cron:
+          name: "clean vsts work directory /home/vstsuser/work/a{{ item }}/*"
+          minute: '0'
+          hour: '2'
+          day: '10'
+          job: "rm -rf /home/vstsuser/work/a{{ item }}/*"          
+          state: present
+        loop: "{{ range(1,4) | list }}"          
