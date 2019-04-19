@@ -5,6 +5,11 @@ variable "location" {
 }
 
 # Shared variables from your subscription
+
+variable "subscription_id" {
+  
+}
+
 variable "network_rg_name" {
   description = "The shared resource group in your subscription used to allocate the virtual network, subnet, aks."
 }
@@ -17,7 +22,7 @@ variable "shared_subnet_name" {
   description = "The name of the subnet where you will create your new resource."
 }
 
-# Your product variables
+# Product variables
 variable "product_rg_name" {
   description = "The resource group of your product where the new features will be created."
 }

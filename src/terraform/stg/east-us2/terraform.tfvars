@@ -3,6 +3,7 @@
 
 # Shared variables from your subscription
 network_rg_name                         =   "test-vsts-ci-stg-ec2"
+subscription_id                         =   "ba5141a2-2132-4e5a-b88d-d61f5a175fbe"
 
 # Virtual network and subnet variables from your subscription
 shared_vnet_name                        =   "test-vsts-ci-stg-ec2"
