@@ -42,7 +42,7 @@ variable "nic_ip_configuration_name" {
 # Virtual machine variables
 variable "vm_name" {
   description = "Set a name for your virtual machine. If you do not fill in the default value will be used below."
-  default     = "personalvmapp"
+  default     = "pcapp"
 }
 
 variable "vm_size" {
@@ -81,7 +81,7 @@ variable "vm_storage_os_managed_disk_type" {
 # Virtual machine credential and profile variables
 variable "vm_os_profile_computer_name" {
   description = "Set a hostname for your virtual machine. If you do not fill in the default value will be used below."
-  default     = "personalcompapp"
+  default     = "pcapp"
 }
 
 variable "vm_os_profile_admin_username" {

@@ -17,4 +17,8 @@ nssm_version: "" # See https://chocolatey.org
 
 # Ansible VSTS project variables
 vsts_deploymentgroupname: "cloud-test-stg"
-vsts_remove: false # Use true to uninstall
+vsts_poolname: "cloud-test-azure-windows"
+# Pass true to uninstall VSTS agent
+vsts_remove: false
+# Pass true to reinstall VSTS agent
+vsts_reinstall: false
