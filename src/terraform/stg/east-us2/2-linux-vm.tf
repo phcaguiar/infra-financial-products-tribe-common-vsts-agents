@@ -1,1 +1,0 @@
-../../common/2-linux-vm.tf

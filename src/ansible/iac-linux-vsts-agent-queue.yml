@@ -99,10 +99,10 @@
 
       - name: Set cron to clean vsts work directory
         cron:
-          name: "clean vsts work directory /home/vstsuser/work/a{{ item }}/*"
+          name: "clean vsts work directory /home/{{ vsts_agent_user }}/work/a{{ item }}/*"
           minute: '0'
           hour: '2'
           day: '10'
-          job: "rm -rf /home/vstsuser/work/a{{ item }}/*"          
+          job: "rm -rf /home/{{ vsts_agent_user }}/work/a{{ item }}/*"          
           state: present
         loop: "{{ range(1,4) | list }}"          

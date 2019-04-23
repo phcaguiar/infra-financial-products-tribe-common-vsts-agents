@@ -16,8 +16,7 @@ dotnetfull_version: "" # See https://chocolatey.org
 nssm_version: "" # See https://chocolatey.org
 
 # Ansible VSTS project variables
-vsts_deploymentgroupname: "cloud-test-stg"
-vsts_poolname: "cloud-test-azure-windows"
+vsts_poolname: "FinProd-STG-App-Windows"
 # Pass true to uninstall VSTS agent
 vsts_remove: false
 # Pass true to reinstall VSTS agent

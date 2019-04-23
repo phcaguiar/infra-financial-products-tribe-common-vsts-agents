@@ -69,113 +69,39 @@
         state: 'started'
         enabled: 'yes'
 
-  ## Dotnetcore installation tasks
-      - name: Import Microsoft APT key
-        apt_key:
-          url: '{{ dotnet_debian_repo_gpg_key_url }}'
-          keyring: /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-          state: 'present'
-        # ignore_errors: true
+## Dotnetcore installation tasks
+    - name: Make sure HTTPS is supported by apt
+      apt:
+        name: apt-transport-https
+        state: present
+        update_cache: yes
 
-      - name: Add repo for Ubuntu Xenial
-        apt_repository:
-          repo: "deb [arch=amd64] {{ microsoft_xenial_ubuntu_repo }} xenial main"
-          filename: "dotnetdev"
-          state: present
-          update_cache: yes
-        when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
+    - name: Import Microsoft APT key
+      apt_key:
+        url: "https://packages.microsoft.com/keys/microsoft.asc"
+        state: present
 
-      - name: Add repo for Ubuntu Bionic
-        apt_repository:
-          repo: "deb [arch=amd64] {{ microsoft_bionic_ubuntu_repo }} bionic main"
-          filename: "dotnetdev"
-          state: present
-          update_cache: yes
-        when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"          
+    - name: Add repo for Ubuntu Xenial
+      apt_repository:
+        repo: deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main
+        filename: "dotnetdev"
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
 
+    - name: Add repo for Ubuntu Bionic
+      apt_repository:
+        repo: deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-bionic-prod bionic main
+        filename: "dotnetdev"
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Ansible Taks for Windows System
-
-  - name: Run ansible tasks on Windows
-    hosts: windows
-    tasks:
-
-  ## VSTS Agent installation task    
-      - name: install vsts agent
-        include_role:
-          name: stone-payments.win-vsts-agent
-
-  ## IIS installation tasks
-      - name: Install IIS Features
-        win_feature:
-          name: "{{ item }}"
-          include_sub_features: true 
-          include_management_tools: true
-          state: present
-        with_items:
-          - NET-Framework-45-Core        
-          - Web-Asp-Net45
-          - Web-Http-Errors
-          - Web-Common-Http        
-          - Web-Static-Content
-          - NET-HTTP-Activation
-          - NET-Non-HTTP-Activ
-        register: win_iis_basic_features
-        tags: iis_basic_features
-        when: install_iis == true
-
-      - name: Install IIS WCF Features
-        win_feature:
-          name: "{{ item }}"
-          include_sub_features: true 
-          include_management_tools: true
-          state: present
-        with_items:
-          - NET-WCF-TCP-Activation45
-          - NET-WCF-HTTP-Activation45
-        register: win_iis_wcf_features
-        tags: iis_wcf_features 
-        when: install_wcf == true # Default value is false
-
-  ## Dotnet core installation task
-      - name: Install dotnet core
-        win_chocolatey:
-          name: "{{ dotnetcore_version }}"
-          state: present
-        register: win_dotnetcore
-        tags: dotnetcore
-        when: install_dotnetcore == true  # Default value is false
-
-  ## Dotnet ful framework installation task
-      - name: Install dotnet full
-        win_chocolatey:
-          name: "{{ dotnetfull_version }}"
-          state: present
-        register: win_dotnetfull
-        tags: dotnetfull
-        when: install_dotnetfull == true # Default value is false
-
-  ## NSSM installation task
-      - name: Install NSSM
-        win_chocolatey:
-          name: "{{ nssm_version }}"
-          state: present
-        register: win_nssm
-        tags: nssm
-        when: install_nssm == true # Default value is false
+    - name: 'install dotnet sdk versions'
+      apt:
+        name: '{{ item }}'
+        state: 'present'
+        update_cache: true
+      with_items:
+        - 'dotnet-sdk-1.1'
+        - 'dotnet-sdk-2.2'

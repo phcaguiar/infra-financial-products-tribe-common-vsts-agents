@@ -1,6 +1,6 @@
 ---
 # Ansible VSTS project variables
-vsts_poolname: "cloud-test-azure"
+vsts_poolname: "FinProd-DEV-Infra-Linux"
 vsts_remove: false # Use true to uninstall
 vsts_reinstall: false # Use true to reinstall
 

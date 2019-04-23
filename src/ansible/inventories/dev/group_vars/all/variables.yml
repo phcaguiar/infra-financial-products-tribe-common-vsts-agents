@@ -1,6 +1,6 @@
 # Global VSTS project variables
 vsts_accountname: "stonepagamentos"
-vsts_projectname: "Inf-Infrastructure"
+vsts_projectname: "finprods-tribe"
 vsts_accesstoken: "{{ lookup('env','env_vsts_accesstoken') }}"
 
 # Global ansible credential variables
