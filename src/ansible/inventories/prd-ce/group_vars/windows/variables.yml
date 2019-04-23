@@ -17,5 +17,5 @@ nssm_version: "" # See https://chocolatey.org
 
 
 # Ansible VSTS project variables
-vsts_deploymentgroupname: "cloud-test-prd-ce"
+vsts_poolname: "FinProd-PRD-CE-App-Windows"
 vsts_remove: false # Use true to uninstall
