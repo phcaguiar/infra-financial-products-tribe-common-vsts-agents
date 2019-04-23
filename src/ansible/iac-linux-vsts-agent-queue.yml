@@ -46,7 +46,7 @@
           src:  "/tmp/terraform-{{ terraform_version }}.zip"
           dest: "/usr/bin"
 
-  # Install ansible[azure] pip package
+  ## Install ansible[azure] pip package
       - name: Install ansible[azure] pre-requisite packages
         package:
           name: "{{ item }}"
@@ -63,7 +63,7 @@
         pip:
           name: ansible[azure]
 
-  ### Tasks to install AZ CLI
+  ## Tasks to install AZ CLI
       - name: Task to install az cli dependencies
         package:
           name: '{{ item }}'

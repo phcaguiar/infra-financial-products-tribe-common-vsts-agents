@@ -8,26 +8,12 @@ vsts_agent_user: "vstsuser"
 # Linux terraform Variables
 terraform_version: 0.11.13
 
-# LVM Variables
-lvm_configs:
-  - pvs_name: /dev/sdc
-    vg_name: vgdocker
-    lv_name: lvdocker
-    fstype: xfs
-    lv_size: +100%FREE
-    mount_point_path: "/home/{{ vsts_agent_user }}/"
-    mount_point_owner: "{{ vsts_agent_user }}"
-    mount_point_group: "{{ vsts_agent_user }}"
-    mount_point_opts: defaults
-    state: absent    
-
 # Docker Variables
 docker_version: '18.06.1~ce~3-0~ubuntu'
 docker_apt_release_channel: 'stable'
 docker_apt_repository: 'deb https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}'
 docker_group_members: 
   - 'vstsuser'
-  # - 'ubuntu'
 
 # Dotnet variables
 dotnet_package: "dotnet-sdk-2.1.105"
