@@ -5,6 +5,7 @@ nic_ip_conf_inf_lnx_vsts_aq_name                     =   "inf-lnx-vsts-aq"
 # Virtual machine variables
 vm_inf_lnx_vsts_aq_name                              =   "inf-lnx-vsts-aq"
 vm_inf_lnx_vsts_aq_size                              =   "Standard_F1"
+stack_inf_lnx_vsts_aq                                =   "inf-lnx-vsts-aq"
 
 # Virtual machine storage variables
 vm_storage_os_disk_inf_lnx_vsts_aq_name              =   "inf-lnx-vsts-aq"

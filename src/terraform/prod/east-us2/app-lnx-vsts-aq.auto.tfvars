@@ -5,6 +5,7 @@ nic_ip_conf_app_lnx_vsts_aq_name                     =   "app-lnx-vsts-aq"
 # Virtual machine variables
 vm_app_lnx_vsts_aq_name                              =   "app-lnx-vsts-aq"
 vm_app_lnx_vsts_aq_size                              =   "Standard_F1"
+stack_app_lnx_vsts_aq                                =   "app-lnx-vsts-aq"
 
 # Virtual machine storage variables
 vm_storage_os_disk_app_lnx_vsts_aq_name              =   "app-lnx-vsts-aq"

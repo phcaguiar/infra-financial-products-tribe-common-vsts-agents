@@ -16,6 +16,10 @@ variable "vm_app_lnx_vsts_aq_size" {
   description = "Set a vm size for your virtual machine."
 }
 
+variable "stack_app_lnx_vsts_aq" {
+  description = "Tag name for stack."
+}
+
 
 # Virtual machine storage variables
 variable "vm_storage_os_disk_app_lnx_vsts_aq_name" {

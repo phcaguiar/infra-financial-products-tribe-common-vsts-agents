@@ -45,5 +45,9 @@ resource "azurerm_virtual_machine" "vm-app-lnx-vsts-aq" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
+
+  tags = {
+    stack = "${var.stack_app_lnx_vsts_aq}"
+  }  
   
 }
