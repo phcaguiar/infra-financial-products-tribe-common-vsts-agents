@@ -1,0 +1,1 @@
+../../common/app-wds-vsts-aq.tf

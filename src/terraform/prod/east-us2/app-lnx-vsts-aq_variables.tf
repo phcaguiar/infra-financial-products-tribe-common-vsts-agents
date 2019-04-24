@@ -1,0 +1,1 @@
+../../common/app-lnx-vsts-aq_variables.tf
