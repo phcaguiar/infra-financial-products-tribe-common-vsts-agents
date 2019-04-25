@@ -1,0 +1,5 @@
+---
+# Common Linux Variables
+
+## Ansible VSTS project variables
+vsts_agent_user: "vstsuser"

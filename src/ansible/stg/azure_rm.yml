@@ -1,0 +1,17 @@
+---
+plugin: azure_rm
+auth_source: env
+include_vm_resource_groups:
+- financialproducts-common-ec2-stg
+
+conditional_groups:
+
+# Linux Host Groups
+  linux: "'Ubuntu' in image.offer"
+  inf-lnx-vsts-aq: "'inf-lnx-vsts-aq' in name"
+  app-lnx-vsts-aq: "'app-lnx-vsts-aq' in name"
+
+# Windows Host Groups
+  windows: "'Windows' in image.offer"
+  app-wds-vsts-aq: "'app-wds-vsts-aq' in name"
+  

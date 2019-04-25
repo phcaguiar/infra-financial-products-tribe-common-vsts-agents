@@ -1,0 +1,8 @@
+---
+# Ansible VSTS project variables
+vsts_poolname: "FinProd-STG-EC2-Infra-Linux"
+vsts_remove: false # Use true to uninstall
+vsts_reinstall: false # Use true to reinstall
+
+# Linux terraform Variables
+terraform_version: 0.11.13

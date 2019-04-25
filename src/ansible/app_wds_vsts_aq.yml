@@ -1,0 +1,19 @@
+---
+### Ansible Taks for Windows System
+  - name: Run ansible tasks on Windows
+    hosts: app-wds-vsts-aq
+    tasks:
+  ## VSTS Agent installation task    
+      - name: install vsts agent
+        include_role:
+          name: stone-payments.win-vsts-agent
+        vars: 
+          vsts_agent_name: "{{ ansible_hostname }}-a{{ item }}"
+          vsts_agentfolder: "C:\\vstsagent\\a{{ item }}"
+        loop: "{{ range(1,4) | list }}"  
+
+  ## Dotnet ful framework installation task
+      - name: Install dotnet full
+        win_chocolatey:
+          name: "{{ dotnetfull_version }}"
+          state: "{{ dotnetfull_version_state }}"

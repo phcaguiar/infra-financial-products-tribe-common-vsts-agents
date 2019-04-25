@@ -1,0 +1,7 @@
+# Ansible VSTS project variables
+vsts_poolname: "FinProd-STG-EC2-App-Windows"
+vsts_remove: true # Use true to uninstall
+
+# dotnet variables
+dotnetfull_version: "dotnet4.6.1" # See https://chocolatey.org
+dotnetfull_version_state: "present"

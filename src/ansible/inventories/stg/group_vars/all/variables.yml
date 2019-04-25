@@ -1,8 +1,0 @@
-# Common VSTS project variables
-vsts_accountname: "stonepagamentos"
-vsts_projectname: "finprods-tribe"
-vsts_accesstoken: "{{ lookup('env','env_vsts_accesstoken') }}"
-
-# Common ansible credential variables
-ansible_user: "{{ lookup('env','TF_VAR_vm_os_profile_admin_username') }}"
-ansible_password: "{{ lookup('env','TF_VAR_vm_os_profile_admin_password') }}"

@@ -1,0 +1,18 @@
+    
+---
+# Ansible VSTS project variables
+vsts_poolname: "FinProd-STG-EC2-App-Linux"
+vsts_remove: false # Use true to uninstall
+vsts_reinstall: false # Use true to reinstall
+
+# Docker Variables
+docker_version: '18.06.1~ce~3-0~ubuntu'
+docker_apt_release_channel: 'stable'
+docker_apt_repository: 'deb https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}'
+docker_group_members: 
+  - "{{ vsts_agent_user }}"
+
+# Dotnet variables
+dotnet_debian_repo_gpg_key_url: "https://packages.microsoft.com/keys/microsoft.asc"
+microsoft_xenial_ubuntu_repo: "https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod"
+microsoft_bionic_ubuntu_repo: "https://packages.microsoft.com/repos/microsoft-ubuntu-bionic-prod"
