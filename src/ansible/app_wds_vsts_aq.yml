@@ -17,3 +17,8 @@
         win_chocolatey:
           name: "{{ dotnetfull_version }}"
           state: "{{ dotnetfull_version_state }}"
+
+      - name: Install dotnet build tools
+        win_chocolatey:
+          name: microsoft-build-tools
+          state: present
