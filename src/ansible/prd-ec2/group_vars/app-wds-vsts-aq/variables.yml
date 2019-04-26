@@ -2,6 +2,14 @@
 vsts_poolname: "FinProd-PRD-EC2-App-Windows"
 vsts_remove: false # Use true to uninstall
 
-# dotnet variables
-dotnetfull_version: "dotnet4.6.1" # See https://chocolatey.org
-dotnetfull_version_state: "present"
+# .Net Framework Developer Package
+netfx_version: "netfx-4.6.1-devpack"
+netfx_status: "present"
+
+# Visual Studio 2017 Build Tools
+vsbuild_tools: "visualstudio2017buildtools"
+vsbuild_status: "present"
+
+# Visual Studio 2017 Workload Web Build Tools
+vsbuild_webtools: "visualstudio2017-workload-webbuildtools"
+vsbuild_webstatus: "present"

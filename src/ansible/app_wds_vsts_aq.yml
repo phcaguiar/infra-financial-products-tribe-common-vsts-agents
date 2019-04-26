@@ -12,13 +12,22 @@
           vsts_agentfolder: "C:\\vstsagent\\a{{ item }}"
         loop: "{{ range(1,4) | list }}"  
 
-  ## Dotnet ful framework installation task
-      - name: Install dotnet full
+      - name: Install Visual Studio 2017 Build Tools
         win_chocolatey:
-          name: "{{ dotnetfull_version }}"
-          state: "{{ dotnetfull_version_state }}"
+          name: "{{ vsbuild_tools }}"
+          state: "{{ vsbuild_status }}"
+        register: vsbuildtools  
 
-      - name: Install dotnet build tools
+      - name: "Install .Net Framework {{ netfx_version }} Developer Package"
         win_chocolatey:
-          name: microsoft-build-tools
-          state: present
+          name: "{{ netfx_version }}"
+          state: "{{ netfx_status }}"
+
+      - name: Install Visual Studio 2017 Workload Web Build Tools
+        win_chocolatey:
+          name: "{{ vsbuild_webtools }}"
+          state: "{{ vsbuild_webstatus }}"        
+
+      - name: Reboot Server if vsbuildtools is Changed
+        win_reboot:
+        when: vsbuildtools.changed
